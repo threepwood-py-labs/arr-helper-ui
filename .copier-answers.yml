@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier.
-_src_path: "c:/prj/aidev/py/aatemplate"
+_src_path: "_py_template"
 _commit: "v1.7.4"
 project_name: "arr-helper-ui"
 project_kind: "qt_app"
@@ -16,4 +16,3 @@ runtime_dependencies:
   - "requests>=2.32.5"
 
   - "rich>=14.3.3"
-
