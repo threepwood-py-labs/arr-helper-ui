@@ -10,6 +10,7 @@ quality checker is available from a source/development install as a CLI command.
 ## Table of Contents
 
 - [Features](#features)
+- [User Guide](#user-guide)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -43,6 +44,11 @@ CLI tool that scans downloaded files in Sonarr/Radarr for required English audio
 - `dry_run = true`: no destructive changes; reports only
 - `dry_run = false`: files failing requirements are deleted and search commands are triggered
 - `interactive = true`: lets you view/select alternative releases or skip
+
+## User Guide
+
+Start with the [user guide](docs/user-guide.md) for first-run setup, common
+Sonarr workflows, media-checker usage, safety notes, and troubleshooting.
 
 ## Requirements
 
@@ -333,6 +339,8 @@ arr-helper-ui/
 |-- .pre-commit-config.yaml
 |-- .github/workflows/ci.yml
 |-- docs/
+|   |-- README.md
+|   |-- user-guide.md
 |   |-- development.md
 |   `-- release-checklist.md
 |-- tests/
