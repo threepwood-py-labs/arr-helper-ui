@@ -44,7 +44,7 @@ CLI tool that scans downloaded files in Sonarr/Radarr for required English audio
 ## Requirements
 
 - **Windows** (10 or later)
-- **Python 3.10+**
+- **Python 3.13+**
 - **ffmpeg/ffprobe** installed and available in PATH
 - **Sonarr** and/or **Radarr** with API access
 
