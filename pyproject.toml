@@ -34,6 +34,10 @@ Homepage = "https://github.com/threepwood-py-labs/arr-helper-ui"
 Repository = "https://github.com/threepwood-py-labs/arr-helper-ui"
 Issues = "https://github.com/threepwood-py-labs/arr-helper-ui/issues"
 
+[project.scripts]
+media-quality-checker = "arr_helper.media_checker.app:main"
+sonarr-ui-helper = "arr_helper.sonarr_ui.app:main"
+
 [tool.hatch.env]
 installer = "uv"
 

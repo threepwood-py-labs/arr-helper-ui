@@ -4,6 +4,9 @@ A toolkit for managing Sonarr and Radarr libraries:
 - `arr_helper.sonarr_ui.app`: desktop GUI for browsing/managing Sonarr content.
 - `arr_helper.media_checker.app`: CLI checker for required English audio/subtitles.
 
+The first portable Windows artifact launches the Sonarr UI helper. The media
+quality checker is available from a source/development install as a CLI command.
+
 ## Table of Contents
 
 - [Features](#features)
@@ -88,6 +91,8 @@ winget install Gyan.FFmpeg
 
 ### Sonarr UI Helper
 
+The portable Windows package starts this GUI directly.
+
 #### Recommended (console-less)
 
 ```bat
@@ -140,6 +145,9 @@ available releases from indexers. The dialog supports:
 - Double-click a release row to download it
 
 ### Media Quality Checker
+
+The media checker is not a separate executable in the portable Windows package.
+Run it from a source/development install.
 
 ```bat
 :: media checker stays a manual CLI command:
