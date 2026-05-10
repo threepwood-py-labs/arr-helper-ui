@@ -7,7 +7,7 @@ from threep_commons.app_identity import AppIdentity
 SETTINGS_ORG_NAME = "ThreepSoftwz"
 SETTINGS_APP_NAME = "arr_helper"
 APP_DISPLAY_NAME = "arr-helper-ui"
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.1.1"
 DEFAULT_LOG_FILENAME = "arr_helper.log"
 DEFAULT_LOG_MAX_BYTES = 1_048_576
 DEFAULT_LOG_BACKUP_COUNT = 3
