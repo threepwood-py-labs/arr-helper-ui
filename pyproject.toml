@@ -110,6 +110,7 @@ dependencies = [
 
 [tool.hatch.envs.package.scripts]
 standalone = "python scripts/windows/build_nuitka.py {args}"
+package-release = "python scripts/windows/package_release.py {args}"
 
 [tool.ruff]
 target-version = "py313"

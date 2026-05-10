@@ -10,6 +10,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
+OFFLINE_DOC_NAMES: tuple[str, ...] = (
+    "README.md",
+    "CHANGELOG.md",
+    "user-guide.md",
+    "technical-overview.md",
+    "dev-packaging.md",
+)
+
 
 @dataclass(frozen=True)
 class ReleaseLayout:
@@ -53,7 +61,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--release-tag",
         default="",
-        help="Release tag suffix used in the artifact name, such as r-0.1.1.",
+        help="Release tag suffix used in the artifact name, such as v0.1.1.",
     )
     return parser.parse_args(argv)
 
@@ -186,6 +194,22 @@ def stage_release(layout: ReleaseLayout, repo_root: Path) -> None:
     shutil.copytree(layout.dist_dir, layout.app_dir)
     shutil.copy2(repo_root / "README.md", layout.staging_dir / "README.md")
     shutil.copy2(repo_root / "LICENSE", layout.staging_dir / "LICENSE")
+    stage_offline_docs(layout, repo_root)
+
+
+def stage_offline_docs(layout: ReleaseLayout, repo_root: Path) -> None:
+    """Copy available markdown docs into the portable release."""
+
+    source_docs_dir = repo_root / "docs"
+    if not source_docs_dir.is_dir():
+        return
+    target_docs_dir = layout.staging_dir / "docs"
+    target_docs_dir.mkdir(parents=True, exist_ok=True)
+
+    for doc_name in OFFLINE_DOC_NAMES:
+        source_path = source_docs_dir / doc_name
+        if source_path.is_file():
+            shutil.copy2(source_path, target_docs_dir / doc_name)
 
 
 def write_release_zip(layout: ReleaseLayout) -> None:
@@ -203,7 +227,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         args = parse_args(argv)
         version = load_project_version(repo_root)
-        release_tag = str(args.release_tag or "").strip() or f"r-{version}"
+        release_tag = str(args.release_tag or "").strip() or f"v{version}"
         layout = build_release_layout(repo_root, release_tag)
         stage_release(layout, repo_root)
         write_release_zip(layout)
