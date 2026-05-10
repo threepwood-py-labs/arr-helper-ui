@@ -7,7 +7,6 @@ A toolkit for managing Sonarr and Radarr libraries:
 ## Table of Contents
 
 - [Features](#features)
-- [UI Walkthrough](#ui-walkthrough)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -41,26 +40,6 @@ CLI tool that scans downloaded files in Sonarr/Radarr for required English audio
 - `dry_run = true`: no destructive changes; reports only
 - `dry_run = false`: files failing requirements are deleted and search commands are triggered
 - `interactive = true`: lets you view/select alternative releases or skip
-
-## UI Walkthrough
-
-1. Configure sources and review your Sonarr library tree.
-
-   ![Configure sources and review library](docs/images/ui-01-overview.png)
-
-   Overview of series/seasons/episodes with monitored-state and metadata columns.
-
-2. Execute add-show workflow with explicit root/profile choices.
-
-   ![Execute add-show workflow](docs/images/ui-02-workflow.png)
-
-   Add-show dialog state used to onboard new series into your managed library.
-
-3. Review manual-search candidates and execute the selected action.
-
-   ![Review manual search results](docs/images/ui-03-details.png)
-
-   Manual-search dialog state for choosing and sending the best release to Sonarr.
 
 ## Requirements
 
@@ -347,10 +326,6 @@ arr-helper-ui/
 |-- .github/workflows/ci.yml
 |-- docs/
 |   |-- development.md
-|   |-- images/
-|   |   |-- ui-01-overview.png
-|   |   |-- ui-02-workflow.png
-|   |   `-- ui-03-details.png
 |   `-- release-checklist.md
 |-- tests/
 |   |-- conftest.py                      # Pytest fixtures (headless Qt setup)
