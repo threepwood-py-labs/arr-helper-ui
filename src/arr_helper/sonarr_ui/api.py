@@ -7,7 +7,9 @@ from urllib.parse import quote
 
 import requests
 
-JsonDict = dict[str, object]
+type JsonScalar = str | int | float | bool | None
+type JsonValue = JsonScalar | list[JsonValue] | dict[str, JsonValue]
+JsonDict = dict[str, JsonValue]
 JsonList = list[JsonDict]
 AuthTuple = tuple[str, str]
 RequestTimeout = int | tuple[float, float]
@@ -119,7 +121,8 @@ class SonarrAPI:
         )
 
     def episode_search(self, episode_ids: list[int]) -> JsonDict:
-        return self.command({"name": "EpisodeSearch", "episodeIds": episode_ids})
+        search_episode_ids: list[JsonValue] = [*episode_ids]
+        return self.command({"name": "EpisodeSearch", "episodeIds": search_episode_ids})
 
     def get_release(self, episode_id: int) -> JsonList:
         return cast("JsonList", self._get(f"release?episodeId={episode_id}"))

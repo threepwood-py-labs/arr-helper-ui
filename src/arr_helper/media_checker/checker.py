@@ -18,7 +18,9 @@ from rich.table import Table
 if TYPE_CHECKING:
     from .config import Config
 
-ConfigMap = dict[str, object]
+type JsonScalar = str | int | float | bool | None
+type JsonValue = JsonScalar | list[JsonValue] | dict[str, JsonValue]
+ConfigMap = dict[str, JsonValue]
 ConfigList = list[ConfigMap]
 HttpAuth = tuple[str, str]
 RequestPayload = ConfigMap | None
@@ -658,17 +660,19 @@ class MediaQualityChecker:
             print("     [DRY RUN] Would delete and re-download")
             return
         episode_ids = self.get_episodes_for_file(series_id, file_id)
+        search_payload: ConfigMap | None = None
+        if episode_ids:
+            search_episode_ids: list[JsonValue] = [*episode_ids]
+            search_payload = {
+                "name": "EpisodeSearch",
+                "episodeIds": search_episode_ids,
+            }
         self._delete_file_and_trigger_search(
             url=self.sonarr_url,
             api_key=self.sonarr_api,
             file_endpoint=f"episodefile/{file_id}",
             auth=self.sonarr_http_auth,
-            search_payload={
-                "name": "EpisodeSearch",
-                "episodeIds": episode_ids,
-            }
-            if episode_ids
-            else None,
+            search_payload=search_payload,
             trigger_message="Triggering episode search...",
             missing_search_message=(
                 "Could not resolve episode IDs before delete; search not triggered"
@@ -864,6 +868,7 @@ class MediaQualityChecker:
         if dry_run:
             print("     [DRY RUN] Would delete and re-download")
             return
+        search_movie_ids: list[JsonValue] = [movie_id]
         self._delete_file_and_trigger_search(
             url=self.radarr_url,
             api_key=self.radarr_api,
@@ -871,7 +876,7 @@ class MediaQualityChecker:
             auth=self.radarr_http_auth,
             search_payload={
                 "name": "MoviesSearch",
-                "movieIds": [movie_id],
+                "movieIds": search_movie_ids,
             },
             trigger_message="Triggering movie search...",
         )
