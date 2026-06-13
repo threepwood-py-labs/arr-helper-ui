@@ -222,6 +222,7 @@ jobs:
     needs:
       - release-metadata
       - publish-release
+    if: ${{ needs.release-metadata.outputs.draft_release != 'true' }}
     runs-on: windows-latest
     timeout-minutes: 30
     permissions:
