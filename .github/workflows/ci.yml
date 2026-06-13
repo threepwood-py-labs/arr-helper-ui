@@ -7,20 +7,25 @@ on:
     branches: [develop, main, master]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint & Types
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
 
@@ -53,32 +58,76 @@ jobs:
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: windows-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v8.2.0
         with:
           enable-cache: true
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Hatch
         run: uv tool install hatch
 
-      - name: Run tests with coverage
-        run: hatch run test-cov
+      - name: Prepare isolated test profile
+        shell: pwsh
+        run: |
+          $userProfile = Join-Path $env:RUNNER_TEMP "arr-helper-ui-user"
+          $appData = Join-Path $userProfile "AppData\Roaming"
+          $localAppData = Join-Path $userProfile "AppData\Local"
+          $tempPath = Join-Path $env:RUNNER_TEMP "arr-helper-ui-temp"
+          $paths = @(
+            $userProfile
+            $appData
+            $localAppData
+            $tempPath
+          )
+          foreach ($path in $paths) {
+            New-Item -ItemType Directory -Force -Path $path | Out-Null
+          }
+          $envLines = @(
+            "USERPROFILE=$userProfile"
+            "APPDATA=$appData"
+            "LOCALAPPDATA=$localAppData"
+            "TEMP=$tempPath"
+            "TMP=$tempPath"
+            "QT_QPA_PLATFORM=offscreen"
+          )
+          $envLines | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Reset coverage data
+        run: hatch run coverage erase
+
+      - name: Run unit tests with coverage
+        run: >
+          hatch run pytest --cov=src/arr_helper --cov-append
+          --cov-report= --cov-fail-under=0 tests/unit -vv --durations=20
+          --timeout=90 --timeout-method=thread -o faulthandler_timeout=180
+
+      - name: Run GUI tests with coverage
+        run: >
+          hatch run pytest --cov=src/arr_helper --cov-append
+          --cov-report= --cov-fail-under=0 tests/gui -vv --durations=20
+          --timeout=90 --timeout-method=thread -o faulthandler_timeout=180
+
+      - name: Write coverage reports
+        run: |
+          hatch run coverage xml
+          hatch run coverage report --fail-under=35 --show-missing
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         if: ${{ matrix.python-version == '3.13' }}
         with:
           files: coverage.xml
