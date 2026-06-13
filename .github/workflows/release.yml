@@ -137,12 +137,9 @@ jobs:
           --target-arch "${{ env.TARGET_ARCH }}"
 
       - name: Smoke test onefile executable launch
-        shell: pwsh
-        run: |
-          $exePath = "build/release/${{ env.APP_OUTPUT_NAME }}-${{ needs.release-metadata.outputs.release_tag }}-${{ env.TARGET_ARCH }}.exe"
-          ./.github/scripts/smoke_launch.ps1 -ExePath $exePath
-        # smoke_launch.ps1 launches the GUI offscreen and passes when the
-        # process survives the grace window or exits cleanly with code 0.
+        run: >
+          python scripts/windows/smoke_launch.py
+          --exe-path "build/release/${{ env.APP_OUTPUT_NAME }}-${{ needs.release-metadata.outputs.release_tag }}-${{ env.TARGET_ARCH }}.exe"
 
       - name: Upload release assets
         uses: actions/upload-artifact@v7
@@ -273,7 +270,6 @@ jobs:
           }
 
       - name: Smoke test published executable launch
-        shell: pwsh
-        run: |
-          $exePath = "build/published-release/${{ env.APP_OUTPUT_NAME }}-${{ needs.release-metadata.outputs.release_tag }}-${{ env.TARGET_ARCH }}.exe"
-          ./.github/scripts/smoke_launch.ps1 -ExePath $exePath
+        run: >
+          python scripts/windows/smoke_launch.py
+          --exe-path "build/published-release/${{ env.APP_OUTPUT_NAME }}-${{ needs.release-metadata.outputs.release_tag }}-${{ env.TARGET_ARCH }}.exe"
